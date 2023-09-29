@@ -15,7 +15,7 @@ public class Sistema implements IObligatorio {
     }
 
     @Override
-    public Retorno eliminarMédico(int codMedico) {
+    public Retorno eliminarMedico(int codMedico) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
