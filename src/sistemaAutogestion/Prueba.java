@@ -6,7 +6,7 @@ public class Prueba {
 
     public static int cantCorrectas, cantIncorrectas, cantNoImplementadas;
 
-    void inicializarResultadosPrueba() {
+    public void inicializarResultadosPrueba() {
         cantCorrectas = cantIncorrectas = cantNoImplementadas = 0;
     }
 
