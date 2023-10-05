@@ -53,11 +53,9 @@ public class Main {
         p.ver(s.eliminarPaciente(66023241).resultado, Retorno.Resultado.ERROR_1,"No se elimina, no hay paciente con esa cédula");
     }
     public static void p1_ListarPacientes(Prueba p, Sistema s){
-        s.listarPacientes();
         p.ver(s.listarPacientes().resultado, Retorno.Resultado.OK,"Se imprime correctamente la lista de pacientes");
     }
     public static void p1_ListarMedicos(Prueba p, Sistema s){
-        s.listarMédicos();
         p.ver(s.listarMédicos().resultado, Retorno.Resultado.OK,"Se imprime correctamente la lista de médicos.");
     }
 

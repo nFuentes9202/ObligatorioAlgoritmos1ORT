@@ -29,6 +29,9 @@ public class ListaSimple<T extends Comparable<T>> implements IListaSimple<T> {
         Nodo nuevo = new Nodo(dato);
         nuevo.setSiguiente(inicio);
         inicio = nuevo;
+        if(cantElementos == 0){
+            fin = nuevo;
+        }
         cantElementos++;
     }
 
@@ -37,15 +40,11 @@ public class ListaSimple<T extends Comparable<T>> implements IListaSimple<T> {
         Nodo nuevo = new Nodo(dato);
         if (esVacia()) {
             inicio = nuevo;
+            fin = nuevo;
         } else {
-            Nodo actual = inicio;
-            while (actual.getSiguiente() != null) {
-                actual = actual.getSiguiente();
+            fin.setSiguiente(nuevo);
+            fin = nuevo;
             }
-
-            actual.setSiguiente(nuevo);
-
-        }
         cantElementos++;
     }
 
@@ -68,11 +67,12 @@ public class ListaSimple<T extends Comparable<T>> implements IListaSimple<T> {
 
                 Nodo actual = inicio;
 
-                while (actual.getSiguiente().getSiguiente() != null) {
+                while (actual.getSiguiente().getSiguiente() != fin) {
                     actual = actual.getSiguiente();
 
                 }
                 actual.setSiguiente(null);
+                fin = actual;
                 cantElementos--;
             }
         }
@@ -164,6 +164,7 @@ public class ListaSimple<T extends Comparable<T>> implements IListaSimple<T> {
                 Nodo nuevo = new Nodo(n);
                 nuevo.setSiguiente(aux.getSiguiente());
                 aux.setSiguiente(nuevo);
+                cantElementos++;
             }
         }
     }

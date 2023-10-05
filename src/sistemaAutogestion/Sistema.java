@@ -23,6 +23,7 @@ public class Sistema implements IObligatorio {
         else{
             listaMedicos = new ListaSimple();
             listaPacientes = new ListaSimple();
+            cantMaxPacientesPorMedico = maxPacientesporMedico;
             r.resultado = Retorno.Resultado.OK;
         }
         return r;
