@@ -64,11 +64,19 @@ public interface IObligatorio {
     Si en la listaConsultas no hay una consulta con los codMedico y CIPaciente asignados para la fecha del dia se establece r como ERROR_2*/
     public Retorno anunciaLlegada(int codMedico, int CIPaciente);
     
-    /*pre:CIPaciente, codMedico y detalleDeConsulta tienen valores validos     
-    post:*/
+    /*pre:CIPaciente, codMedico y detalleDeConsulta tienen valores validos, listaPacientes, listaMedicos y listaConsultas existen y estan inicializadas.     
+    post: Si en la listaConsultas hay una consulta con estado "En espera" que tenga como paciente al CIPaciente y como medico al codMedico, se cerrará
+    la consulta cambiando su estado a "Terminada" y asignandole a su atributo detalle el string detalleDeConsulta, se establece r como OK.
+    Si en la listaPacientes no existe CIPacientes se establece r como ERROR_1.
+    Si en la lista de consultas no existe consulta con estado "En espera" para un paciente CIPaciente con medico codMedico para el dia se
+    establece r como ERROR_2*/
     public Retorno terminarConsultaMedicoPaciente(int CIPaciente, int codMedico, String detalleDeConsulta);
     
-    //pre:      post:
+    /*pre: codMedico y fechaConsulta tienen valores validos. listaMedico y listaConsultas existen y estan inicializadas.
+    post: Si en listaConsultas hay una consulta para la fecha fechaConsulta y el medico codMedico que tenga estado "Pendiente" se cambia el estado 
+    a "No asistió" y se da de alta en la listaHistoriaClinica del paciente al cual le pertenece la consulta.Se establece r como OK.
+    Si codMedico no existe en listaMedicos se establece r como ERROR_1.
+    Si en listaConsultas no hay una consulta para la fecha fechaConsulta con el medico codMedico se establece r como ERROR_2.*/
     public Retorno cerrarConsulta(String codMédico, Date fechaConsulta); 
     
  
