@@ -4,6 +4,8 @@
  */
 package Clases;
 
+import java.util.Date;
+
 /**
  *
  * @author nfuen
@@ -15,6 +17,8 @@ public class Paciente implements Comparable<Paciente>{
     private int CI;
     
     private String direccion;
+    
+    private Date fechaDeseadaUltimaConsulta;
     
     public Paciente(String elNombre, int laCI, String laDireccion){
         this.nombre = elNombre;
@@ -81,5 +85,19 @@ public class Paciente implements Comparable<Paciente>{
     @Override
     public String toString() {
         return this.getNombre();
+    }
+
+    /**
+     * @return the fechaDeseadaUltimaConsulta
+     */
+    public Date getFechaDeseadaUltimaConsulta() {
+        return fechaDeseadaUltimaConsulta;
+    }
+
+    /**
+     * @param fechaDeseadaUltimaConsulta the fechaDeseadaUltimaConsulta to set
+     */
+    public void setFechaDeseadaUltimaConsulta(Date fechaDeseadaUltimaConsulta) {
+        this.fechaDeseadaUltimaConsulta = fechaDeseadaUltimaConsulta;
     }
 }

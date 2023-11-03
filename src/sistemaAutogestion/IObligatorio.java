@@ -123,4 +123,5 @@ public interface IObligatorio {
     /*tal vez no deberia haber una listaEspecialidades sino q dentro de esta funcion arme una lista de especialidades
     recorriendo a cada medico y tomando la especialidad de su property y ahi despues q la arme la recorra y busque lo q tenga q buscar*/
      
+    public Retorno registrarDiaDeConsulta(int codMedico,Date fecha);
 }

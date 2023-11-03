@@ -122,9 +122,16 @@ public class ListaSimple<T extends Comparable<T>> implements IListaSimple<T> {
     }
 
     @Override
-    public Nodo obtenerElemento(T dato) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+public Nodo<T> obtenerElemento(T n) {
+    Nodo<T> actual = inicio;
+    while (actual != null) {
+        if (actual.getDato().equals(n)) {
+            return actual; // Retorna el nodo que contiene el dato buscado.
+        }
+        actual = actual.getSiguiente();
     }
+    return null; // Si no se encuentra el elemento, se retorna null.
+}
 
     @Override
     public void vaciar() {
