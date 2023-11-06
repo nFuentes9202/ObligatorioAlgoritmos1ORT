@@ -121,14 +121,21 @@ public class Consulta implements Comparable<Consulta> {
     }
 
     @Override
-    public int compareTo(Consulta o) {
-        return Integer.compare(numeroReserva, o.getNumeroReserva());
+public int compareTo(Consulta o) {
+    // Asumiendo que numeroReserva es un campo de la clase Consulta que almacena el número de reserva
+    if (this.numeroReserva < o.getNumeroReserva()) {
+        return -1; // Devuelve -1 si este objeto es menor que el objeto pasado como parámetro
+    } else if (this.numeroReserva > o.getNumeroReserva()) {
+        return 1; // Devuelve 1 si este objeto es mayor que el objeto pasado como parámetro
+    } else {
+        return 0; // Devuelve 0 si ambos objetos son iguales en términos del número de reserva
     }
+}
     
     @Override
     public boolean equals(Object o){
         Consulta c = (Consulta) o;
-        return this.getCiPaciente()== c.getCiPaciente();
+        return this.getCiPaciente() == c.getCiPaciente() && this.getCodMedico() == c.getCodMedico();
     }
     
 }

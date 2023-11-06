@@ -50,60 +50,71 @@ public class ListaSimple<T extends Comparable<T>> implements IListaSimple<T> {
 
     @Override
     public void eliminarInicio() {
-        if (!esVacia()) {
-            Nodo borrar = inicio;
-            inicio = inicio.getSiguiente();
-            borrar.setSiguiente(null);
+    if (!esVacia()) {
+        Nodo<T> borrar = inicio;
+        inicio = inicio.getSiguiente();
+        borrar.setSiguiente(null);
+        cantElementos--;
+
+        // Si después de eliminar el inicio la lista queda vacía, entonces fin también debe ser null.
+        if (inicio == null) {
+            fin = null;
+        }
+    }
+}
+
+
+    @Override
+public void eliminarFinal() {
+    if (!esVacia()) {
+        if (inicio.getSiguiente() == null) {
+            // Si solo hay un elemento en la lista, vaciar la lista.
+            this.vaciar();
+        } else {
+            // Encuentra el penúltimo nodo.
+            Nodo<T> actual = inicio;
+            while (actual.getSiguiente() != fin) {
+                actual = actual.getSiguiente();
+            }
+            // Elimina el último nodo.
+            actual.setSiguiente(null);
+            fin = actual;
             cantElementos--;
+            // Si la lista ahora está vacía, asegúrate de que fin también sea null.
+            if (inicio == null) {
+                fin = null;
+            }
         }
     }
+}
+
 
     @Override
-    public void eliminarFinal() {
-        if (!esVacia()) {
-            if (inicio.getSiguiente() == null) {
-                this.vaciar();
-            } else {
-
-                Nodo actual = inicio;
-
-                while (actual.getSiguiente().getSiguiente() != fin) {
-                    actual = actual.getSiguiente();
-
+public void eliminarElemento(T dato) {
+    if (!esVacia()) {
+        if (inicio.getDato().equals(dato)) {
+            this.eliminarInicio();
+        } else {
+            Nodo<T> aux = inicio;
+            while (aux.getSiguiente() != null && !aux.getSiguiente().getDato().equals(dato)) {
+                aux = aux.getSiguiente();
+            }
+            if (aux.getSiguiente() != null) { // Encontré el elemento
+                Nodo<T> aBorrar = aux.getSiguiente();
+                if (aBorrar == fin) { // Si es el último elemento
+                    fin = aux; // Actualiza fin al nuevo último nodo
                 }
-                actual.setSiguiente(null);
-                fin = actual;
+                aux.setSiguiente(aBorrar.getSiguiente());
+                aBorrar.setSiguiente(null);
                 cantElementos--;
+                if (inicio == null) { // Si la lista quedó vacía
+                    fin = null; // Asegúrate de que fin también sea null
+                }
             }
         }
     }
+}
 
-    @Override
-    public void eliminarElemento(T dato) {
-        if (!esVacia()) {
-            if (inicio.getDato().equals(dato)) {
-                this.eliminarInicio();
-            } else {
-
-                Nodo aux = inicio;
-
-                while (aux.getSiguiente() != null && !aux.getSiguiente().getDato().equals(dato)) {
-                    aux = aux.getSiguiente();
-                }
-                
-                if(aux.getSiguiente()!=null){ //Enbcontre el elemento
-                    
-                    Nodo aBorrar = aux.getSiguiente();
-                    aux.setSiguiente(aBorrar.getSiguiente());
-                    aBorrar.setSiguiente(null);
-                    cantElementos--;
-                    
-                }
-
-            }
-
-        }
-    }
 
      @Override
     public boolean existeElemento(T dato) {

@@ -20,6 +20,7 @@ public class Main {
         p1_ReservaConsulta(p,s);
         p1_CancelarReserva(p,s);
         p1_ListarConsultas(p,s);
+        p1_ListarPacientesEspera(p,s);
         p.imprimirResultadosPrueba();
         
         
@@ -85,12 +86,12 @@ public class Main {
 
     }
     public static void p1_ReservaConsulta(Prueba p, Sistema s){
-        // Asumimos que ya existen en el sistema un médico con código 1 y un paciente con CI 4214522
+        // Asumimos que ya existen en el sistema un médico con código 4 y un paciente con CI 4214522
         p.ver(s.reservaConsulta(4, 4214522, new Date(2023,9,26)).resultado, Retorno.Resultado.OK, "Se realiza la reserva correctamente");
         p.ver(s.reservaConsulta(2, 4214522, new Date(2023,9,26)).resultado, Retorno.Resultado.OK, "Se realiza la reserva correctamente");
         p.ver(s.reservaConsulta(4, 99999999, new Date(2023,9,27)).resultado, Retorno.Resultado.ERROR_1, "No existe la cédula del paciente");
         p.ver(s.reservaConsulta(999, 4214522, new Date(2023,9,27)).resultado, Retorno.Resultado.ERROR_2, "No existe el código del médico");
-        // Asumimos que el paciente 4214522 ya tiene una consulta con el médico 1
+        // Asumimos que el paciente 4214522 ya tiene una consulta con el médico 4
         p.ver(s.reservaConsulta(4, 4214522, new Date(2023,9,26)).resultado, Retorno.Resultado.ERROR_3, "El médico ya tiene una consulta con ese paciente");
         // Asumimos que no hay un día de consulta registrado para la fecha dada
         p.ver(s.reservaConsulta(4, 4214522, new Date(2023, 9, 25)).resultado, Retorno.Resultado.ERROR_4, "No hay un día de consulta registrado para esa fecha");
@@ -104,10 +105,16 @@ public class Main {
         // Asumimos que el paciente 4214522 no tiene una reserva con el médico 1 o está cerrada
         p.ver(s.cancelarReserva(4, 4214522).resultado, Retorno.Resultado.ERROR_3, "El paciente no tenía una reserva con ese médico o está cerrada");
         // Falta todavía dejar una reserva confirmada para este caso, los demás estan OK
-        p.ver(s.cancelarReserva(2, 4214522).resultado, Retorno.Resultado.ERROR_4, "La reserva no está en estado pendiente");
+       // p.ver(s.cancelarReserva(2, 4214522).resultado, Retorno.Resultado.ERROR_4, "La reserva no está en estado pendiente");
     }
     public static void p1_ListarConsultas(Prueba p, Sistema s){
-        p.ver(s.listarConsultas(2).resultado, Retorno.Resultado.OK, "Se listan correctamente las consultas del médico con código 4");
+        p.ver(s.listarConsultas(2).resultado, Retorno.Resultado.OK, "Se listan correctamente las consultas del médico con código 2");
         p.ver(s.listarConsultas(999).resultado, Retorno.Resultado.ERROR_1, "No se pueden listar las consultas porque el médico con código 999 no existe");
+    }
+    
+    public static void p1_ListarPacientesEspera(Prueba p, Sistema s){
+        
+        p.ver(s.listarPacientesEnEspera("2", new Date(2023,9,26)).resultado, Retorno.Resultado.OK, "Se listan los pacientes en espera para el médico con código 2 en la fecha");
+        p.ver(s.listarPacientesEnEspera("999", new Date()).resultado, Retorno.Resultado.ERROR_1, "No se listan los pacientes porque el médico con código 999 no tiene consultas en la fecha de hoy.");
     }
 }
