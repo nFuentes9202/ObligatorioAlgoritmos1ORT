@@ -232,9 +232,43 @@ public class Sistema implements IObligatorio {
 
     @Override
     public Retorno listarConsultas(int codMédico) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Retorno retorno = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
+        Medico medicoBuscado = new Medico();
+        medicoBuscado.setCodMedico(codMédico);
+        
+        Nodo<Medico> nodoMedico = listaMedicos.obtenerElemento(medicoBuscado);
+        
+        if(nodoMedico == null){
+            retorno.resultado = Retorno.Resultado.ERROR_1;
+            return retorno;
+        } else{
+            Medico medico = nodoMedico.getDato();
+            retorno.resultado = Retorno.Resultado.OK;
+            listarConsultasRecursivo(medico.getConsultas().getInicio(), retorno);
+        }  
+        return retorno;
     }
-
+    
+    private void imprimirConsulta(Consulta consulta) {
+    // Aquí implementas la lógica para imprimir los detalles de la consulta
+    System.out.println("Número de Reserva: " + consulta.getNumeroReserva() +
+                       "\nCódigo Médico: " + consulta.getCodMedico() +
+                       "\nCédula Paciente: " + consulta.getCiPaciente() +
+                       "\nFecha: " + consulta.getFecha() +
+                       "\nEstado: " + consulta.getEstado());
+    }
+    
+    private void listarConsultasRecursivo(Nodo<Consulta> nodo, Retorno retorno) {
+    if (nodo == null) {
+        return;
+    }
+    
+    // Suponiendo que tienes un método para imprimir la consulta
+    imprimirConsulta(nodo.getDato());
+    listarConsultasRecursivo(nodo.getSiguiente(), retorno);
+    }
+    
+    
     @Override
     public Retorno listarPacientesEnEspera(String codMédico, Date fecha) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

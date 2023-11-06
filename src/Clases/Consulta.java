@@ -122,6 +122,13 @@ public class Consulta implements Comparable<Consulta> {
 
     @Override
     public int compareTo(Consulta o) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return Integer.compare(numeroReserva, o.getNumeroReserva());
     }
+    
+    @Override
+    public boolean equals(Object o){
+        Consulta c = (Consulta) o;
+        return this.getCiPaciente()== c.getCiPaciente();
+    }
+    
 }
