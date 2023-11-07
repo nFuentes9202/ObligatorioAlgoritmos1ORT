@@ -71,6 +71,7 @@ public class Main {
     public static void p1_ListarMedicos(Prueba p, Sistema s){
         p.ver(s.listarMédicos().resultado, Retorno.Resultado.OK,"Se imprime correctamente la lista de médicos.");
     }
+    
     public static void p1_RegistrarDiaConsulta(Prueba p, Sistema s){
         // Suponiendo que ya has registrado algunos médicos con los códigos 1, 2, 3, etc.
         // y que la fecha actual es 2023-09-25.
@@ -94,33 +95,29 @@ public class Main {
         p.ver(s.registrarDiaDeConsulta(5, s.convertirLocalDateADate(LocalDate.now())).resultado, Retorno.Resultado.OK, "Se registra un nuevo día de consulta para el médico con código 5");
 
     }
-    public static void p1_ReservaConsulta(Prueba p, Sistema s) {
+    
+    public static void p1_ReservaConsulta(Prueba p, Sistema s) {//arreglar comentarios bien
         // Asumimos que ya existen en el sistema un médico con código 4 y un paciente con CI 4214522
-        //p.ver(s.reservaConsulta(4, 4214522, new Date(2023,9,26)).resultado, Retorno.Resultado.OK, "Se realiza la reserva correctamente");
+        //Caso de prueba: se realiza la reserva correctamente
         p.ver(s.reservaConsulta(4, 4214522, s.convertirLocalDateADate(LocalDate.of(2023,9,26))).resultado, Retorno.Resultado.OK, "Se realiza la reserva correctamente");
-        
-        //p.ver(s.reservaConsulta(2, 4214522, new Date(2023,9,26)).resultado, Retorno.Resultado.OK, "Se realiza la reserva correctamente");
+        //Caso de prueba: se realiza la reserva correctamente
         p.ver(s.reservaConsulta(2, 4214522, s.convertirLocalDateADate(LocalDate.of(2023,9,26))).resultado, Retorno.Resultado.OK, "Se realiza la reserva correctamente");
-        
-        //p.ver(s.reservaConsulta(4, 99999999, new Date(2023,9,27)).resultado, Retorno.Resultado.ERROR_1, "No existe la cédula del paciente");
+        //Caso de prueba: No se realiza la reserva porque no existe la cedula del paciente
         p.ver(s.reservaConsulta(4, 99999999, s.convertirLocalDateADate(LocalDate.of(2023, 9, 27))).resultado, Retorno.Resultado.ERROR_1, "No existe la cédula del paciente");
-        
-        //p.ver(s.reservaConsulta(999, 4214522, new Date(2023,9,27)).resultado, Retorno.Resultado.ERROR_2, "No existe el código del médico");
+        //Caso de prueba: No se realiza la reserva porque no existe el codigo del 
         p.ver(s.reservaConsulta(999, 4214522, s.convertirLocalDateADate(LocalDate.of(2023,9,27))).resultado, Retorno.Resultado.ERROR_2, "No existe el código del médico");
     
         // Asumimos que el paciente 4214522 ya tiene una consulta con el médico 4
-        //p.ver(s.reservaConsulta(4, 4214522, new Date(2023,9,26)).resultado, Retorno.Resultado.ERROR_3, "El médico ya tiene una consulta con ese paciente");
         p.ver(s.reservaConsulta(4, 4214522, s.convertirLocalDateADate(LocalDate.of(2023,9,26))).resultado, Retorno.Resultado.ERROR_3, "El médico ya tiene una consulta con ese paciente");
     
         // Asumimos que no hay un día de consulta registrado para la fecha dada
-        //p.ver(s.reservaConsulta(4, 4214522, new Date(2023, 9, 25)).resultado, Retorno.Resultado.ERROR_4, "No hay un día de consulta registrado para esa fecha");
         p.ver(s.reservaConsulta(4, 4214522, s.convertirLocalDateADate(LocalDate.of(2023,9,25))).resultado, Retorno.Resultado.ERROR_4, "No hay un día de consulta registrado para esa fecha");
     
         // Asumimos que existe en el sistema un medico con el codigo 5 y un paciente con CI 2 y que el medico tiene dia de consulta hoy
-        //p.ver(s.reservaConsulta(5, 2, new Date(2023,11,6)).resultado, Retorno.Resultado.OK, "Se realiza la reserva correctamente para el medico 5 y el paciente 2");
+
         p.ver(s.reservaConsulta(5, 2, s.convertirLocalDateADate(LocalDate.now())).resultado, Retorno.Resultado.OK, "Se realiza la reserva correctamente para el medico 5 y el paciente 2");
         
-        //p.ver(s.reservaConsulta(5, 1, new Date(2023,11,6)).resultado, Retorno.Resultado.OK, "Se realiza la reserva correctamente para el medico 5 y el paciente 1");
+        
         p.ver(s.reservaConsulta(5, 1, s.convertirLocalDateADate(LocalDate.now())).resultado, Retorno.Resultado.OK, "Se realiza la reserva correctamente para el medico 5 y el paciente 1");
     }
     
