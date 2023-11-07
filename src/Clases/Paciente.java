@@ -5,6 +5,7 @@
 package Clases;
 
 import java.util.Date;
+import tads.ListaSimple;
 
 /**
  *
@@ -20,14 +21,21 @@ public class Paciente implements Comparable<Paciente>{
     
     private Date fechaDeseadaUltimaConsulta;
     
+    private ListaSimple<Consulta> HistorialClinico;
+    
     public Paciente(String elNombre, int laCI, String laDireccion){
         this.nombre = elNombre;
         this.CI = laCI;
         this.direccion = laDireccion;
+        this.HistorialClinico = new ListaSimple<>();
     }
 
     public Paciente() {
-        
+        this.HistorialClinico = new ListaSimple<>();
+    }
+    
+    public void AgregarHistoriaClinica(Consulta consulta){
+        this.getHistoriaClinica().agregarOrd(consulta);
     }
     
     /**
@@ -85,6 +93,19 @@ public class Paciente implements Comparable<Paciente>{
     @Override
     public String toString() {
         return this.getNombre();
+    }
+    
+    /**
+     * @return the consultas
+     */
+    public ListaSimple<Consulta> getHistoriaClinica() {
+        return HistorialClinico;
+    }
+    /**
+     * @param HistorialClinico the consultas to set
+     */
+    public void setHistoriaClinica(ListaSimple<Consulta> HistorialClinico) {
+        this.HistorialClinico = HistorialClinico;
     }
 
     /**

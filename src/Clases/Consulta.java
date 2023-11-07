@@ -5,6 +5,9 @@
 package Clases;
 
 import java.util.Date;
+import java.util.Calendar;
+import java.time.LocalDate;
+import java.time.ZoneId;
 /**
  *
  * @author nfuen
@@ -23,6 +26,8 @@ public class Consulta implements Comparable<Consulta> {
     
     private String estado;
     
+    private String Descripcion;
+    
     
     public Consulta(int ciPaciente, int codMedico, Date fecha){
         this.numeroReserva = UltimoId++;
@@ -30,11 +35,22 @@ public class Consulta implements Comparable<Consulta> {
         this.CodMedico = codMedico;
         this.Fecha = fecha;
         this.estado = "pendiente";
+        this.Descripcion = null;
     }
     
     public Consulta(){
         
     }
+    
+    public boolean sonDelMismoDia(Date fecha1, Date fecha2) {
+        // Convierte las fechas a tipos de fecha locales
+        LocalDate localDate1 = fecha1.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localDate2 = fecha2.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    
+        // Compara si están en el mismo día
+        return localDate1.isEqual(localDate2);
+    }
+    
     /**
      * @return the UltimoId
      */
@@ -119,9 +135,23 @@ public class Consulta implements Comparable<Consulta> {
     public void setCiPaciente(int CiPaciente) {
         this.CiPaciente = CiPaciente;
     }
+    
+     /**
+     * @return the Descripcion
+     */
+    public String getDescripcion() {
+        return Descripcion;
+    }
+
+    /**
+     * @param Descripcion the estado to set
+     */
+    public void setDescripcion(String Descripcion) {
+        this.Descripcion = Descripcion;
+    }
 
     @Override
-public int compareTo(Consulta o) {
+    public int compareTo(Consulta o) {
     // Asumiendo que numeroReserva es un campo de la clase Consulta que almacena el número de reserva
     if (this.numeroReserva < o.getNumeroReserva()) {
         return -1; // Devuelve -1 si este objeto es menor que el objeto pasado como parámetro

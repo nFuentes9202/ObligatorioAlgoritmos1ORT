@@ -2,6 +2,8 @@ package sistemaAutogestion;
 
 import Clases.*;
 import java.util.Date;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import tads.*;
 
 public class Sistema implements IObligatorio {
@@ -202,17 +204,138 @@ public class Sistema implements IObligatorio {
 
     @Override
     public Retorno anunciaLlegada(int codMedico, int CIPaciente) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Retorno r = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
+                
+        Date fechaActual = new Date();
+        
+        //obtiene paciente
+        Paciente pacienteBuscado = new Paciente();
+        pacienteBuscado.setCI(CIPaciente);
+        Nodo<Paciente> nodoPaciente = listaPacientes.obtenerElemento(pacienteBuscado);
+        if(nodoPaciente == null){
+            r.resultado = Retorno.Resultado.ERROR_1;
+            return r;
+        }
+        
+        //obtiene medico
+        Medico medicoBuscado = new Medico();
+        medicoBuscado.setCodMedico(codMedico);
+        Nodo<Medico> nodoMedico = listaMedicos.obtenerElemento(medicoBuscado);
+        
+        Medico medico = nodoMedico.getDato();
+        ListaSimple<Consulta> consultas = medico.getConsultas();
+        Nodo<Consulta> nodoConsulta = consultas.getInicio();
+        
+        boolean consultaEncontrada = false;
+        while(nodoConsulta!=null){
+            Consulta consulta = nodoConsulta.getDato();
+            if(consulta.getCiPaciente()== CIPaciente && consulta.getEstado().equals("pendiente") && consulta.sonDelMismoDia(consulta.getFecha(), fechaActual)){
+                consulta.setEstado("en espera");
+                consultaEncontrada = true;
+                break;
+            }
+            nodoConsulta = nodoConsulta.getSiguiente();
+        }
+        
+        if(consultaEncontrada){
+            r.resultado = Retorno.Resultado.OK;
+        }else{
+            r.resultado = Retorno.Resultado.ERROR_2;
+        }
+
+        return r;
     }
 
     @Override
     public Retorno terminarConsultaMedicoPaciente(int CIPaciente, int codMedico, String detalleDeConsulta) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Retorno r = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
+        
+        Date fechaActual = new Date();
+        
+        //Buscar paciente por CI
+        Paciente pacienteBuscado = new Paciente();
+        pacienteBuscado.setCI(CIPaciente);
+        Nodo<Paciente> nodoPaciente = listaPacientes.obtenerElemento(pacienteBuscado);
+        if(nodoPaciente == null){
+            r.resultado = Retorno.Resultado.ERROR_1;
+            return r;
+        }
+        
+        //Buscar medico por Codigo
+        Medico medicoBuscado = new Medico();
+        medicoBuscado.setCodMedico(codMedico);
+        Nodo<Medico> nodoMedico = listaMedicos.obtenerElemento(medicoBuscado);
+        
+        Medico medico = nodoMedico.getDato();
+        ListaSimple<Consulta> consultas = medico.getConsultas();
+        Nodo<Consulta> nodoConsulta = consultas.getInicio();
+        boolean consultaEncontrada = false;
+        
+        while(nodoConsulta!=null){
+            Consulta consulta = nodoConsulta.getDato();
+            if(consulta.getCiPaciente()== CIPaciente && consulta.getCodMedico()== codMedico && consulta.sonDelMismoDia(consulta.getFecha(), fechaActual) && consulta.getEstado().equals("en espera")){
+                consulta.setEstado("terminada");
+                consulta.setDescripcion(detalleDeConsulta);
+                medicoBuscado.AgregarConsulta(consulta);
+                consultaEncontrada = true;
+                break;
+            }
+            nodoConsulta = nodoConsulta.getSiguiente();
+        }
+        if(consultaEncontrada){
+            r.resultado = Retorno.Resultado.OK;
+        }else{
+            r.resultado = Retorno.Resultado.ERROR_2;
+        }
+        return r;
     }
 
     @Override
-    public Retorno cerrarConsulta(String codMédico, Date fechaConsulta) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Retorno cerrarConsulta(int codMedico, Date fechaConsulta) {
+        Retorno r = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
+        
+        // Buscar al médico por su código
+        Medico medicoBuscado = new Medico();
+        medicoBuscado.setCodMedico(codMedico);
+        Nodo<Medico> nodoMedico = listaMedicos.obtenerElemento(medicoBuscado);
+        if (nodoMedico == null) {
+            r.resultado = Retorno.Resultado.ERROR_1;
+            return r;
+        }
+        
+        medicoBuscado = nodoMedico.getDato();
+        ListaSimple<Consulta> consultas = medicoBuscado.getConsultas();
+        Nodo<Consulta> nodoConsulta = consultas.getInicio();
+
+        boolean consultaEncontrada = false;
+
+        while (nodoConsulta != null) {
+            Consulta consulta = nodoConsulta.getDato();
+
+            if (consulta.getFecha().equals(fechaConsulta) && consulta.getEstado().equals("pendiente")) {
+                
+                consulta.setEstado("no asistió");
+                
+                Paciente pacienteBuscado = new Paciente();
+                pacienteBuscado.setCI(consulta.getCiPaciente());
+                Nodo<Paciente> nodoPaciente = listaPacientes.obtenerElemento(pacienteBuscado);
+                Paciente paciente = nodoPaciente.getDato();
+                
+                consultaEncontrada = true;
+                pacienteBuscado.AgregarHistoriaClinica(consulta);
+                break;
+            }
+
+            nodoConsulta = nodoConsulta.getSiguiente();
+        }
+
+        if (consultaEncontrada) {
+            r.resultado = Retorno.Resultado.OK;
+        } else {
+            r.resultado = Retorno.Resultado.ERROR_2;
+        }
+
+        return r;
     }
 
     @Override
@@ -271,56 +394,56 @@ public class Sistema implements IObligatorio {
     
     
     @Override
-public Retorno listarPacientesEnEspera(String codMedicoStr, Date fecha) {
-    Retorno retorno = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
-    int codMedico = Integer.parseInt(codMedicoStr); // Asegúrate de manejar NumberFormatException si el código no es un número válido.
+    public Retorno listarPacientesEnEspera(String codMedicoStr, Date fecha) {
+        Retorno retorno = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
+        int codMedico = Integer.parseInt(codMedicoStr); // Asegúrate de manejar NumberFormatException si el código no es un número válido.
     
-    // Buscar el médico por código.
-    Medico medicoBuscado = new Medico();
-    medicoBuscado.setCodMedico(codMedico);
-    Nodo<Medico> nodoMedico = listaMedicos.obtenerElemento(medicoBuscado);
+        // Buscar el médico por código.
+        Medico medicoBuscado = new Medico();
+        medicoBuscado.setCodMedico(codMedico);
+        Nodo<Medico> nodoMedico = listaMedicos.obtenerElemento(medicoBuscado);
     
-    if (nodoMedico == null) {
-        retorno.resultado = Retorno.Resultado.ERROR_1;
-        return retorno;
-    }
-    
-    Medico medico = nodoMedico.getDato();
-    ListaSimple<Consulta> consultasDelDia = new ListaSimple<>();
-    
-    // Filtrar consultas por fecha y estado "en espera".
-    ListaSimple<Consulta> consultasMedico = medico.getConsultas();
-    Nodo<Consulta> actual = medico.getConsultas().getInicio();
-    while (actual != null) {
-        Consulta consulta = actual.getDato();
-        if (consulta.getFecha().equals(fecha) && consulta.getEstado().equals("en espera")) {
-            consultasDelDia.agregarFinal(consulta);
+        if (nodoMedico == null) {
+            retorno.resultado = Retorno.Resultado.ERROR_1;
+            return retorno;
         }
-        actual = actual.getSiguiente();
-    }
     
-    // Verificar si hay consultas en espera para esa fecha.
-    if (consultasDelDia.esVacia()) {
-        retorno.resultado = Retorno.Resultado.ERROR_1;
+        Medico medico = nodoMedico.getDato();
+        ListaSimple<Consulta> consultasDelDia = new ListaSimple<>();
+    
+        // Filtrar consultas por fecha y estado "en espera".
+        ListaSimple<Consulta> consultasMedico = medico.getConsultas();
+        Nodo<Consulta> actual = medico.getConsultas().getInicio();
+        while (actual != null) {
+            Consulta consulta = actual.getDato();
+            if (consulta.getFecha()!=null && consulta.getFecha().equals(fecha) && consulta.getEstado().equals("en espera")) {//problema en consulta.getFecha() no llega la fecha
+                consultasDelDia.agregarFinal(consulta);
+            }
+            actual = actual.getSiguiente();
+        }
+    
+        // Verificar si hay consultas en espera para esa fecha.
+        if (consultasDelDia.esVacia()) {
+            retorno.resultado = Retorno.Resultado.ERROR_1;
+            return retorno;
+        }
+    
+        // Ordenar las consultas por número de reserva.
+        //consultasDelDia.ordenar(); // Asumiendo que tienes un método para ordenar.
+    
+        // Imprimir las consultas.
+        actual = consultasDelDia.getInicio();
+        while (actual != null) {
+            Consulta consulta = actual.getDato();
+            System.out.println("Reserva: " + consulta.getNumeroReserva() +
+                            ", Paciente CI: " + consulta.getCiPaciente() +
+                            ", Estado: " + consulta.getEstado());
+            actual = actual.getSiguiente();
+        }
+    
+        retorno.resultado = Retorno.Resultado.OK;
         return retorno;
     }
-    
-    // Ordenar las consultas por número de reserva.
-    //consultasDelDia.ordenar(); // Asumiendo que tienes un método para ordenar.
-    
-    // Imprimir las consultas.
-    actual = consultasDelDia.getInicio();
-    while (actual != null) {
-        Consulta consulta = actual.getDato();
-        System.out.println("Reserva: " + consulta.getNumeroReserva() +
-                           ", Paciente CI: " + consulta.getCiPaciente() +
-                           ", Estado: " + consulta.getEstado());
-        actual = actual.getSiguiente();
-    }
-    
-    retorno.resultado = Retorno.Resultado.OK;
-    return retorno;
-}
 
     @Override
     public Retorno consultasPendientesPaciente(int CIPaciente) {
@@ -357,9 +480,9 @@ public Retorno listarPacientesEnEspera(String codMedicoStr, Date fecha) {
 
     return retorno;
     }
-
-   
-
     
-
+    public Date convertirLocalDateADate(LocalDate localDate) {
+        ZoneId zoneId = ZoneId.systemDefault();
+        return Date.from(localDate.atStartOfDay(zoneId).toInstant());
+    }
 }

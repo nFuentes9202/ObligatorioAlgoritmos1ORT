@@ -77,7 +77,7 @@ public interface IObligatorio {
     a "No asistió" y se da de alta en la listaHistoriaClinica del paciente al cual le pertenece la consulta.Se establece r como OK.
     Si codMedico no existe en listaMedicos se establece r como ERROR_1.
     Si en listaConsultas no hay una consulta para la fecha fechaConsulta con el medico codMedico se establece r como ERROR_2.*/
-    public Retorno cerrarConsulta(String codMédico, Date fechaConsulta); 
+    public Retorno cerrarConsulta(int codMedico, Date fechaConsulta); 
     
  
       /*
