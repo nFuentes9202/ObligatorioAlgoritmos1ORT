@@ -26,6 +26,8 @@ public class Main {
         p1_ListarPacientesEspera(p,s);
         //p1_terminarConsultaMedicoPaciente(p,s);
         //p1_cerrarConsulta(p,s);
+        p1_ListarHistorialClinico(p,s);
+        p1_ConsultasPendientesPaciente(p,s);
         p.imprimirResultadosPrueba();
         
         
@@ -164,8 +166,27 @@ public class Main {
         //Caso de prueba: No se listan las consultas porque el codigo de medico no existe.
         p.ver(s.listarConsultas(999).resultado, Retorno.Resultado.ERROR_1, "No se pueden listar las consultas porque el médico con código 999 no existe");
     }
-
     
+    public static void p1_ListarHistorialClinico(Prueba p, Sistema s){
+        // Asumimos que el paciente con CI 4214522 ha tenido consultas previas
+        p.ver(s.historiaClínicaPaciente(4214522).resultado, Retorno.Resultado.OK, "Se lista correctamente el historial clínico del paciente con CI 4214522");
+        // Caso de prueba: Intentar listar el historial clínico de un paciente que no existe
+        p.ver(s.historiaClínicaPaciente(99999999).resultado, Retorno.Resultado.ERROR_1, "No se puede listar el historial clínico, paciente no existe");
+    }
+    
+    public static void p1_ConsultasPendientesPaciente(Prueba p, Sistema s) {
+    // Prueba con un paciente que tiene consultas pendientes
+    // Asumiendo que el paciente con CI 4214522 tiene consultas pendientes
+    p.ver(s.consultasPendientesPaciente(4214522).resultado, Retorno.Resultado.OK, "Se listan correctamente las consultas pendientes del paciente con CI 4214522");
+
+    // Prueba con un paciente que no tiene consultas pendientes
+    // Asumiendo que el paciente con CI 1 está en el sistema pero no tiene consultas pendientes
+    p.ver(s.consultasPendientesPaciente(1).resultado, Retorno.Resultado.OK, "No hay consultas pendientes para el paciente con CI 1, pero la operación es correcta");
+
+    // Prueba con un paciente inexistente
+    // Asumiendo que no hay un paciente con CI 99999999
+    p.ver(s.consultasPendientesPaciente(99999999).resultado, Retorno.Resultado.ERROR_1, "No existe un paciente con CI 99999999, se retorna un error");
+    }
     /*public static void p1_terminarConsultaMedicoPaciente(Prueba p, Sistema s){
         //Se asume que existe una reserva en espera para el medico con codigo 5 y el paciente con CI 2
         p.ver(s.terminarConsultaMedicoPaciente(2, 5, "Reposo por una semana").resultado, Retorno.Resultado.OK, "Se cierra la consulta del paciente 2 con el medico 5 y se setea la descripcion");
@@ -174,4 +195,6 @@ public class Main {
     public static void p1_cerrarConsulta(Prueba p, Sistema s){
         p.ver(s.cerrarConsulta(5, new Date(123,10,6)).resultado, Retorno.Resultado.OK, "Se cierra la consulta del medico 5");
     }*/
-}
+    
+}   
+    

@@ -447,14 +447,80 @@ public class Sistema implements IObligatorio {
 
     @Override
     public Retorno consultasPendientesPaciente(int CIPaciente) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    Retorno r = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
+    
+    Paciente pacienteBuscado = new Paciente();
+    pacienteBuscado.setCI(CIPaciente);
+    Nodo<Paciente> nodoPaciente = listaPacientes.obtenerElemento(pacienteBuscado);
+
+    // Verificar si el paciente existe
+    if (nodoPaciente == null) {
+        r.resultado = Retorno.Resultado.ERROR_1;
+        return r;
     }
 
+    r.resultado = Retorno.Resultado.OK;
+    System.out.println("Consultas pendientes del paciente CI: " + CIPaciente);
+    listarConsultasPendientesDePacienteEnMedicos(listaMedicos.getInicio(), CIPaciente);
+
+    return r;
+    }
+
+
+   private void listarConsultasPendientesDePacienteEnMedicos(Nodo<Medico> nodoMedico, int CIPaciente) {
+    if (nodoMedico == null) {
+        return; // Caso base: No hay más médicos en la lista.
+    }
+
+    Medico medico = nodoMedico.getDato();
+    listarConsultasPendientesDePacienteEnConsultas(medico.getConsultas().getInicio(), CIPaciente);
+
+    // Llamada recursiva para el siguiente médico en la lista.
+    listarConsultasPendientesDePacienteEnMedicos(nodoMedico.getSiguiente(), CIPaciente);
+}
+
+private void listarConsultasPendientesDePacienteEnConsultas(Nodo<Consulta> nodoConsulta, int CIPaciente) {
+    if (nodoConsulta == null) {
+        return; // Caso base: No hay más consultas en la lista.
+    }
+
+    Consulta consulta = nodoConsulta.getDato();
+    if (consulta.getCiPaciente() == CIPaciente && consulta.getEstado().equals("pendiente")) {
+        imprimirConsulta(consulta);
+    }
+
+    // Llamada recursiva para la siguiente consulta en la lista.
+    listarConsultasPendientesDePacienteEnConsultas(nodoConsulta.getSiguiente(), CIPaciente);
+}
+    
     @Override
     public Retorno historiaClínicaPaciente(int ci) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Retorno retorno = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
+    Paciente pacienteBuscado = new Paciente();
+    pacienteBuscado.setCI(ci);
+    Nodo<Paciente> nodoPaciente = listaPacientes.obtenerElemento(pacienteBuscado);
+
+    if (nodoPaciente == null) {
+        retorno.resultado = Retorno.Resultado.ERROR_1;
+    } else {
+        retorno.resultado = Retorno.Resultado.OK;
+        // Suponiendo que el paciente tiene una lista de consultas ordenadas por fecha de manera descendente.
+        listarHistoriaClinicaRecursiva(nodoPaciente.getDato().getHistoriaClinica().getInicio(), retorno);
+    }
+    return retorno;
     }
 
+    private void listarHistoriaClinicaRecursiva(Nodo<Consulta> nodo, Retorno retorno) {
+    if (nodo == null) {
+        // Caso base: llegamos al final de la lista.
+        return;
+    }
+    // Procesar la consulta actual.
+    imprimirConsulta(nodo.getDato());
+    // Llamada recursiva al siguiente nodo en la lista.
+    listarHistoriaClinicaRecursiva(nodo.getSiguiente(), retorno);
+}
+    
     @Override
     public Retorno reporteDePacientesXFechaYEspecialidad(int mes, int año) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
