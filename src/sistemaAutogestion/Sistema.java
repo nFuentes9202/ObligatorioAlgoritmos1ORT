@@ -549,11 +549,17 @@ public class Sistema implements IObligatorio {
         for(int i = 0; i<especialidades.length;i++){
             mapaEspecialidades.put(especialidades[i], i);
         }
-        
+        //Vamos a convertir los datos para consultas
+        //Gracias java por tanto, perdón por tan poco
+        mes = mes - 1;
+        año = año -1900;
         //Contar las consultas cerradas x especialidad y x dia del mes
         for(Nodo<Consulta> nodoConsulta = consultas.getInicio(); nodoConsulta !=null; nodoConsulta = nodoConsulta.getSiguiente()){
             Consulta consulta = nodoConsulta.getDato();
-            //Date fechaConsulta = nodoConsulta.getDato().getFecha();
+            Date fechaConsulta = nodoConsulta.getDato().getFecha();
+            int Mes = fechaConsulta.getMonth();
+            int Año = fechaConsulta.getYear();
+            String estado = consulta.getEstado();
             if(consulta.getFecha().getMonth()== mes && consulta.getFecha().getYear()== año && consulta.getEstado().equals("terminada")){
                 Medico medicoBuscado = new Medico();
                 medicoBuscado.setCodMedico(consulta.getCodMedico());
