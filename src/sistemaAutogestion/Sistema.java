@@ -561,7 +561,7 @@ public class Sistema implements IObligatorio {
                 if(nodoMedico!=null){
                     int especialidadMedico = medicoBuscado.getEspecialidad();
                     int dia = consulta.getFecha().getDay()-1;
-                    Integer especialidadIndex = mapaEspecialidades.get(especialidadMedico);
+                    Integer especialidadIndex = mapaEspecialidades.get(especialidadMedico);//aca falla
                     if(especialidadIndex != null){
                         contadorConsultas[dia][especialidadIndex]++;
                     }
