@@ -3,7 +3,14 @@ package sistemaAutogestion;
 import Clases.*;
 import java.util.Date;
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.ZoneId;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Calendar;
+import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.List;
 import tads.*;
 
 public class Sistema implements IObligatorio {
@@ -305,14 +312,14 @@ public class Sistema implements IObligatorio {
         
         medicoBuscado = nodoMedico.getDato();
         ListaSimple<Consulta> consultas = medicoBuscado.getConsultas();
-        Nodo<Consulta> nodoConsulta = consultas.getInicio();
+        Nodo<Consulta> nodoConsulta = consultas.getInicio();//hasta aca llega la fecha de la consulta por get y la pasada por el metodo en main
 
         boolean consultaEncontrada = false;
 
         while (nodoConsulta != null) {
-            Consulta consulta = nodoConsulta.getDato();
+            Consulta consulta = nodoConsulta.getDato();//aca la fecha se pierde
 
-            if (consulta.getFecha().equals(fechaConsulta) && consulta.getEstado().equals("pendiente")) {
+            if (consulta.sonDelMismoDia(fechaConsulta, consulta.getFecha()) && consulta.getEstado().equals("pendiente")) {
                 
                 consulta.setEstado("no asistió");
                 
@@ -337,7 +344,6 @@ public class Sistema implements IObligatorio {
 
         return r;
     }
-
     @Override
     public Retorno listarMédicos() {
         Retorno r = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
@@ -416,7 +422,7 @@ public class Sistema implements IObligatorio {
         Nodo<Consulta> actual = medico.getConsultas().getInicio();
         while (actual != null) {
             Consulta consulta = actual.getDato();
-            if (consulta.getFecha()!=null && consulta.getFecha().equals(fecha) && consulta.getEstado().equals("en espera")) {//problema en consulta.getFecha() no llega la fecha
+            if (consulta.getFecha()!=null && consulta.getFecha().equals(fecha) && consulta.getEstado().equals("en espera")) {
                 consultasDelDia.agregarFinal(consulta);
             }
             actual = actual.getSiguiente();
@@ -467,7 +473,7 @@ public class Sistema implements IObligatorio {
     }
 
 
-   private void listarConsultasPendientesDePacienteEnMedicos(Nodo<Medico> nodoMedico, int CIPaciente) {
+    private void listarConsultasPendientesDePacienteEnMedicos(Nodo<Medico> nodoMedico, int CIPaciente) {
     if (nodoMedico == null) {
         return; // Caso base: No hay más médicos en la lista.
     }
@@ -479,7 +485,7 @@ public class Sistema implements IObligatorio {
     listarConsultasPendientesDePacienteEnMedicos(nodoMedico.getSiguiente(), CIPaciente);
 }
 
-private void listarConsultasPendientesDePacienteEnConsultas(Nodo<Consulta> nodoConsulta, int CIPaciente) {
+    private void listarConsultasPendientesDePacienteEnConsultas(Nodo<Consulta> nodoConsulta, int CIPaciente) {
     if (nodoConsulta == null) {
         return; // Caso base: No hay más consultas en la lista.
     }
@@ -523,7 +529,131 @@ private void listarConsultasPendientesDePacienteEnConsultas(Nodo<Consulta> nodoC
     
     @Override
     public Retorno reporteDePacientesXFechaYEspecialidad(int mes, int año) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        Retorno retorno = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
+        
+        if(mes<=0 || mes>12 || año<2020 || año>2023){
+            retorno.resultado = retorno.resultado.ERROR_1;
+        }
+        
+        int[]especialidades = obtenerEspecialidadesUnicas();
+        int diasEnMes = obtenerDiasEnMes(mes,año);
+        ListaSimple<Consulta> consultas = obtenerConsultasUnicas();
+        
+        //Crear matriz para contar las consultar
+        //Filas son los dias del mes y las columnas las especialidades
+        int[][] contadorConsultas = new int[diasEnMes][especialidades.length];
+        
+        //Mapear cada especialidad a un indice de columna
+        HashMap<Integer, Integer> mapaEspecialidades = new HashMap<>();
+        for(int i = 0; i<especialidades.length;i++){
+            mapaEspecialidades.put(especialidades[i], i);
+        }
+        
+        //Contar las consultas cerradas x especialidad y x dia del mes
+        for(Nodo<Consulta> nodoConsulta = consultas.getInicio(); nodoConsulta !=null; nodoConsulta = nodoConsulta.getSiguiente()){
+            Consulta consulta = nodoConsulta.getDato();
+            //Date fechaConsulta = nodoConsulta.getDato().getFecha();
+            if(consulta.getFecha().getMonth()== mes && consulta.getFecha().getYear()== año && consulta.getEstado().equals("terminada")){
+                Medico medicoBuscado = new Medico();
+                medicoBuscado.setCodMedico(consulta.getCodMedico());
+                Nodo<Medico> nodoMedico = listaMedicos.obtenerElemento(medicoBuscado);
+                if(nodoMedico!=null){
+                    int especialidadMedico = medicoBuscado.getEspecialidad();
+                    int dia = consulta.getFecha().getDay()-1;
+                    Integer especialidadIndex = mapaEspecialidades.get(especialidadMedico);
+                    if(especialidadIndex != null){
+                        contadorConsultas[dia][especialidadIndex]++;
+                    }
+                }
+
+            }
+        }
+        
+        // Convertir la matriz a una cadena de texto para mostrarla
+        StringBuilder matrizComoString = new StringBuilder();
+        for(int i = 0; i < contadorConsultas.length; i++) {
+            for(int j = 0; j < contadorConsultas[i].length; j++) {
+                matrizComoString.append(String.format("%4d", contadorConsultas[i][j]));
+            }
+            matrizComoString.append("\n"); // Nueva línea para separar las filas de la matriz
+        }
+        
+        retorno.valorString = matrizComoString.toString();
+        retorno.resultado = retorno.resultado.OK;
+        return retorno;
+        
+    }
+    
+    private int[]obtenerEspecialidadesUnicas(){
+        Nodo<Medico> nodoMedicoActual = listaMedicos.getInicio();//obtener primer nodo de lista de medicos
+        int[] especialidadesTemporales = new int[listaMedicos.cantidadElementos()];//setear como cantidad de especialidades la cantidad de medicos
+        int cantEspecialidades = 0;
+        
+        while(nodoMedicoActual!=null){
+            int especialidadActual = nodoMedicoActual.getDato().getEspecialidad();
+            boolean yaExiste = false;
+            
+            for(int i = 0; i<cantEspecialidades; i++){
+                if(especialidadesTemporales[i] == especialidadActual){
+                    yaExiste = true;
+                    break;
+                }
+            }
+            
+            if(!yaExiste){
+                if(cantEspecialidades == especialidadesTemporales.length){
+                    int[] nuevoArreglo = new int[cantEspecialidades + 1];
+                    System.arraycopy(especialidadesTemporales, 0, nuevoArreglo, 0, especialidadesTemporales.length);
+                    especialidadesTemporales = nuevoArreglo;
+                }
+                especialidadesTemporales[cantEspecialidades] = especialidadActual;
+                cantEspecialidades++;
+            }
+            nodoMedicoActual = nodoMedicoActual.getSiguiente();
+           
+        }
+                    //Copiar las especialidades recogidas al array final con tamaño exacto
+            int[] especialidadesUnicas = new int[cantEspecialidades];
+            System.arraycopy(especialidadesTemporales,0, especialidadesUnicas,0,cantEspecialidades);
+            return especialidadesUnicas;
+    }
+    
+    private ListaSimple<Consulta> obtenerConsultasUnicas(){
+        ListaSimple<Consulta> consultas = new ListaSimple<>();
+        
+        Nodo<Medico> nodoMedico = listaMedicos.getInicio();
+        
+        while(nodoMedico != null){
+            ListaSimple<Consulta> listaConsultasMedico = nodoMedico.getDato().getConsultas();
+            Nodo<Consulta> nodoConsulta = listaConsultasMedico.getInicio();
+            while(nodoConsulta!=null){
+                if(!contieneConsulta(consultas, nodoConsulta.getDato())){
+                    consultas.agregarFinal(nodoConsulta.getDato());
+                }
+ 
+                nodoConsulta = nodoConsulta.getSiguiente();
+            }
+            nodoMedico = nodoMedico.getSiguiente();
+        }
+
+        return consultas;
+    }
+    
+    private boolean contieneConsulta(ListaSimple<Consulta> lista, Consulta consulta){
+        Nodo<Consulta> nodoActual = lista.getInicio();
+        while(nodoActual != null){
+            if(nodoActual.getDato().equals(consulta)){
+                return true;
+            }
+            nodoActual = nodoActual.getSiguiente();
+        }
+        return false;
+    }
+    
+    private int obtenerDiasEnMes(int mes, int año){
+        YearMonth yearMonth = YearMonth.of(año, mes);
+        return yearMonth.lengthOfMonth();
     }
 
     @Override

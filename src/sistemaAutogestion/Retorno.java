@@ -15,6 +15,10 @@ public class Retorno {
 
         this.resultado = resultado;
     }
+    
+    public String getValorString(){
+        return this.valorString;
+    }
         
         
         
