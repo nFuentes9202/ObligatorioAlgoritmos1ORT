@@ -1,8 +1,6 @@
 package inicio;
 
-import java.util.Date;
 import java.time.LocalDate;
-import java.time.Month;
 import sistemaAutogestion.*;
 import sistemaAutogestion.Sistema;
 public class Main {
@@ -11,26 +9,65 @@ public class Main {
         Prueba p = new Prueba();
         Sistema s = new Sistema();
         p.inicializarResultadosPrueba();
-        p1_creacionSistema(p,s);
-        p1_RegistrarMedico(p,s);
-        p1_RegistrarPaciente(p,s);
-        p1_ListarPacientes(p,s);
-        p1_ListarMedicos(p,s);
-        p1_RegistrarDiaConsulta(p,s);
-        p1_ReservaConsulta(p,s);
-        p2_EliminarMedico(p,s);
-        p1_EliminarPaciente(p,s);
-        p1_AnunciarLlegada(p,s);
-        p1_CancelarReserva(p,s);
-        p1_ListarConsultas(p,s);
-        p1_ListarPacientesEspera(p,s);
-        p1_terminarConsultaMedicoPaciente(p,s);
-        p1_cerrarConsulta(p,s);
-        p1_ListarHistorialClinico(p,s);
-        p1_ConsultasPendientesPaciente(p,s);
-        p1_reporteDePacientesXFechaYEspecialidad(p,s);
-        p.imprimirResultadosPrueba();   
+
+        System.out.println("\n=== Creación del Sistema ===");
+        p1_creacionSistema(p, s);
+
+        System.out.println("\n=== Registro de Médicos ===");
+        p1_RegistrarMedico(p, s);
+
+        System.out.println("\n=== Registro de Pacientes ===");
+        p1_RegistrarPaciente(p, s);
+
+        System.out.println("\n=== Listado de Pacientes ===");
+        p1_ListarPacientes(p, s);
+
+        System.out.println("\n=== Listado de Médicos ===");
+        p1_ListarMedicos(p, s);
+
+        System.out.println("\n=== Registro de Días de Consulta ===");
+        p1_RegistrarDiaConsulta(p, s);
+
+        System.out.println("\n=== Reserva de Consultas ===");
+        p1_ReservaConsulta(p, s);
+
+        System.out.println("\n=== Eliminación de Médicos ===");
+        p2_EliminarMedico(p, s);
+
+        System.out.println("\n=== Eliminación de Pacientes ===");
+        p1_EliminarPaciente(p, s);
+
+        System.out.println("\n=== Anuncio de Llegada de Pacientes ===");
+        p1_AnunciarLlegada(p, s);
+
+        System.out.println("\n=== Cancelación de Reservas ===");
+        p1_CancelarReserva(p, s);
+
+        System.out.println("\n=== Listado de Consultas ===");
+        p1_ListarConsultas(p, s);
+
+        System.out.println("\n=== Listado de Pacientes en Espera ===");
+        p1_ListarPacientesEspera(p, s);
+
+        System.out.println("\n=== Terminación de Consultas Médico-Paciente ===");
+        p1_terminarConsultaMedicoPaciente(p, s);
+
+        System.out.println("\n=== Cierre de Consultas ===");
+        p1_cerrarConsulta(p, s);
+        
+        System.out.println("\n=== Listado del Historial Clínico de Pacientes ===");
+        p1_ListarHistorialClinico(p, s);
+
+        System.out.println("\n=== Consultas Pendientes de un Paciente ===");
+        p1_ConsultasPendientesPaciente(p, s);
+
+        System.out.println("\n=== Reporte de Pacientes por Fecha y Especialidad ===");
+        p1_reporteDePacientesXFechaYEspecialidad(p, s);
+
+        System.out.println("\n=== Resultados de Pruebas ===");
+        p.imprimirResultadosPrueba();
     }
+
     public static void p1_creacionSistema(Prueba p, Sistema s){
         //Caso de prueba: Se puede inicializar el sistema correctamente
         p.ver(s.crearSistemaDeAutogestion(10).resultado, Retorno.Resultado.OK , "Se crea el sistema con capacidad de 10 pacientes por médico");
@@ -182,6 +219,7 @@ public class Main {
 
         // Caso de prueba: No hay consulta "en espera" en la fecha del día
         p.ver(s.terminarConsultaMedicoPaciente(9999, 2, "Detalle de la consulta").resultado, Retorno.Resultado.ERROR_2, "No hay consulta 'en espera' para hoy para el paciente con CI 9999 con el médico 2");
+        
     }
     public static void p1_cerrarConsulta(Prueba p, Sistema s){
         //Caso de prueba: Si se pudo cerrar la consulta correctamente
@@ -190,6 +228,7 @@ public class Main {
         p.ver(s.cerrarConsulta(105, s.convertirLocalDateADate(LocalDate.now())).resultado, Retorno.Resultado.ERROR_1, "No se cierra la consulta del medico 105 porque ese medico no existe");
         //Caso de prueba: No se cierra porque el medico no tiene consultas el dia de la fecha
         p.ver(s.cerrarConsulta(2, s.convertirLocalDateADate(LocalDate.now())).resultado, Retorno.Resultado.ERROR_2, "No se cierra la consulta del medico 2, no tiene consultas el dia de la fecha");
+    
     }
     public static void p1_ListarConsultas(Prueba p, Sistema s){
         //Caso de prueba: Se listan las consultas con sus fechas.
@@ -199,7 +238,7 @@ public class Main {
     }
     public static void p1_ListarHistorialClinico(Prueba p, Sistema s){
         // Asumimos que el paciente con CI 4214522 ha tenido consultas previas
-        p.ver(s.historiaClínicaPaciente(4214522).resultado, Retorno.Resultado.OK, "Se lista correctamente el historial clínico del paciente con CI 4214522");
+        p.ver(s.historiaClínicaPaciente(2).resultado, Retorno.Resultado.OK, "Se lista correctamente el historial clínico del paciente con CI 2");
         // Caso de prueba: Intentar listar el historial clínico de un paciente que no existe
         p.ver(s.historiaClínicaPaciente(99999999).resultado, Retorno.Resultado.ERROR_1, "No se puede listar el historial clínico, paciente no existe");
     }
@@ -224,6 +263,5 @@ public class Main {
             System.out.println(resultado.getValorString());
         }
     }
-    
-}   
+}
     

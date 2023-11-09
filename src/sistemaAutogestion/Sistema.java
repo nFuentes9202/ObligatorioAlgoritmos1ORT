@@ -415,7 +415,7 @@ public Retorno eliminarPaciente(int CI) {
     
     private void imprimirConsulta(Consulta consulta) {
     // Aquí implementas la lógica para imprimir los detalles de la consulta
-    System.out.println("Número de Reserva: " + consulta.getNumeroReserva() +
+    System.out.println("\nNúmero de Reserva: " + consulta.getNumeroReserva() +
                        "\nCódigo Médico: " + consulta.getCodMedico() +
                        "\nCédula Paciente: " + consulta.getCiPaciente() +
                        "\nFecha: " + consulta.getFecha() +
@@ -452,7 +452,6 @@ public Retorno eliminarPaciente(int CI) {
         ListaSimple<Consulta> consultasDelDia = new ListaSimple<>();
     
         // Filtrar consultas por fecha y estado "en espera".
-        ListaSimple<Consulta> consultasMedico = medico.getConsultas();
         Nodo<Consulta> actual = medico.getConsultas().getInicio();
         while (actual != null) {
             Consulta consulta = actual.getDato();
@@ -590,10 +589,6 @@ public Retorno eliminarPaciente(int CI) {
         //Contar las consultas cerradas x especialidad y x dia del mes
         for(Nodo<Consulta> nodoConsulta = consultas.getInicio(); nodoConsulta !=null; nodoConsulta = nodoConsulta.getSiguiente()){
             Consulta consulta = nodoConsulta.getDato();
-            Date fechaConsulta = nodoConsulta.getDato().getFecha();
-            int Mes = fechaConsulta.getMonth();
-            int Año = fechaConsulta.getYear();
-            String estado = consulta.getEstado();
             if(consulta.getFecha().getMonth()== mes && consulta.getFecha().getYear()== año && consulta.getEstado().equals("terminada")){
                 Medico medicoBuscado = new Medico();
                 medicoBuscado.setCodMedico(consulta.getCodMedico());
