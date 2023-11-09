@@ -208,7 +208,7 @@ public class Main {
     p.ver(s.consultasPendientesPaciente(99999999).resultado, Retorno.Resultado.ERROR_1, "No existe un paciente con CI 99999999, se retorna un error");
     }
     public static void p1_reporteDePacientesXFechaYEspecialidad(Prueba p, Sistema s){
-        Retorno resultado = s.reporteDePacientesXFechaYEspecialidad(11, 2023);
+        Retorno resultado = s.reporteDePacientesXFechaYEspecialidad(LocalDate.now().getMonthValue(), LocalDate.now().getYear());
         p.ver(resultado.resultado, Retorno.Resultado.OK, "Se muestra la matriz");
         if(resultado.resultado == Retorno.Resultado.OK){
             System.out.println("Matriz de consultas por dia y especialidad");

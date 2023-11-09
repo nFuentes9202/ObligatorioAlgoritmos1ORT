@@ -3,20 +3,17 @@ package sistemaAutogestion;
 import Clases.*;
 import java.util.Date;
 import java.time.LocalDate;
-import java.time.Month;
+//import java.time.Month;
 import java.time.ZoneId;
-import java.util.Map;
+//import java.util.Map;
 import java.util.HashMap;
-import java.util.Calendar;
+//import java.util.Calendar;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.List;
+//import java.util.ArrayList;
+//import java.util.List;
 import tads.*;
 
 public class Sistema implements IObligatorio {
-
-    
-    
     private int cantMaxPacientesPorMedico;
     
     private ListaSimple listaMedicos;
@@ -574,8 +571,8 @@ public Retorno eliminarPaciente(int CI) {
         for(int i = 0; i<especialidades.length;i++){
             mapaEspecialidades.put(especialidades[i], i);
         }
+        
         //Vamos a convertir los datos para consultas
-        //Gracias java por tanto, perdón por tan poco
         mes = mes - 1;
         año = año -1900;
         //Contar las consultas cerradas x especialidad y x dia del mes
@@ -590,9 +587,9 @@ public Retorno eliminarPaciente(int CI) {
                 medicoBuscado.setCodMedico(consulta.getCodMedico());
                 Nodo<Medico> nodoMedico = listaMedicos.obtenerElemento(medicoBuscado);
                 if(nodoMedico!=null){
-                    int especialidadMedico = medicoBuscado.getEspecialidad();
+                    int especialidadMedico = nodoMedico.getDato().getEspecialidad();//busque la especialidad x el nodo en vez d x medicoBuscado
                     int dia = consulta.getFecha().getDay()-1;
-                    Integer especialidadIndex = mapaEspecialidades.get(especialidadMedico);
+                    Integer especialidadIndex = mapaEspecialidades.get(especialidadMedico);//tenia q poner especialidadMedico angora sim
                     if(especialidadIndex != null){
                         contadorConsultas[dia][especialidadIndex]++;
                     }
@@ -603,9 +600,24 @@ public Retorno eliminarPaciente(int CI) {
         
         // Convertir la matriz a una cadena de texto para mostrarla
         StringBuilder matrizComoString = new StringBuilder();
+        
+        //Encabezados de columnas (especialidades)
+        StringBuilder encabezadosColumnas = new StringBuilder("     ");
+        for(int especialidad: especialidades){
+            encabezadosColumnas.append(String.format("ESP %d    ", especialidad));
+        }
+        encabezadosColumnas.append("\n");
+        
+        //Agregar encabezados de columnas a la cadena matrizComoString
+        matrizComoString.append(encabezadosColumnas);
+        
+
+        
+        //Rellenar matriz
         for(int i = 0; i < contadorConsultas.length; i++) {
+            matrizComoString.append(String.format("%2d  ", i + 1));
             for(int j = 0; j < contadorConsultas[i].length; j++) {
-                matrizComoString.append(String.format("%4d", contadorConsultas[i][j]));
+                matrizComoString.append(String.format("%4d     ", contadorConsultas[i][j]));
             }
             matrizComoString.append("\n"); // Nueva línea para separar las filas de la matriz
         }
