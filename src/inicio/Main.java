@@ -125,7 +125,7 @@ public class Main {
         //Caso de prueba: No se puede eliminar medico porque no existe medico con ese codigo
         p.ver(s.eliminarMedico(52).resultado, Retorno.Resultado.ERROR_1, "Médico no existente, no se puede borrar");
         //Falta hacer que no se pueda borrar porque tiene reservado
-        //p.ver(s.eliminarMedico(5).resultado, Retorno.Resultado.ERROR_2, "Médico no se puede borrar porque tiene una reserva");
+        p.ver(s.eliminarMedico(5).resultado, Retorno.Resultado.ERROR_2, "Médico no se puede borrar porque tiene una reserva");
 
     }
     public static void p1_EliminarPaciente(Prueba p, Sistema s){
@@ -134,6 +134,7 @@ public class Main {
         //Caso de prueba: No se puede eliminar al paciente porque no existe su CI
         p.ver(s.eliminarPaciente(66023241).resultado, Retorno.Resultado.ERROR_1,"No se elimina, no hay paciente con esa cédula");
         //Caso de prueba: No se puede eliminar al paciente porque ya agendo una consulta
+        p.ver(s.eliminarPaciente(4214522).resultado, Retorno.Resultado.ERROR_2,"No se elimina, paciente ha realizado alguna consulta");
     }
     public static void p1_AnunciarLlegada(Prueba p, Sistema s){
         

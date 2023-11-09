@@ -56,20 +56,32 @@ public class Sistema implements IObligatorio {
     }
 
     @Override
-    public Retorno eliminarMedico(int codMedico) {
-        Retorno r = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
-        Medico medicoEliminar = new Medico();
-        medicoEliminar.setCodMedico(codMedico);
-        if(listaMedicos.existeElemento(medicoEliminar)){
-            listaMedicos.eliminarElemento(medicoEliminar);
-            r.resultado = Retorno.Resultado.OK;
-            return r;
-        }
-        else{
-            r.resultado = Retorno.Resultado.ERROR_1;
-            return r;
-        }
+public Retorno eliminarMedico(int codMedico) {
+    Retorno r = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
+    Medico medicoEliminar = new Medico();
+    medicoEliminar.setCodMedico(codMedico);
+
+    // Verificar si el médico existe
+    if (!listaMedicos.existeElemento(medicoEliminar)) {
+        r.resultado = Retorno.Resultado.ERROR_1;
+        return r;
     }
+
+    // Obtener el médico de la lista para verificar sus consultas
+    Nodo<Medico> nodoMedico = listaMedicos.obtenerElemento(medicoEliminar);
+    Medico medico = nodoMedico.getDato();
+
+    // Verificar si el médico tiene consultas agendadas
+    if (!medico.getConsultas().esVacia() || !medico.getColaDeEspera().isEmpty()) {
+        r.resultado = Retorno.Resultado.ERROR_2;
+        return r;
+    }
+
+    // Proceder a eliminar el médico
+    listaMedicos.eliminarElemento(medicoEliminar);
+    r.resultado = Retorno.Resultado.OK;
+    return r;
+}
 
     @Override
     public Retorno agregarPaciente(String nombre, int CI, String direccion) {
@@ -86,20 +98,33 @@ public class Sistema implements IObligatorio {
     }
 
     @Override
-    public Retorno eliminarPaciente(int CI) {
-        Retorno r = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
-        Paciente aEliminar = new Paciente();
-        aEliminar.setCI(CI);
-        if(listaPacientes.existeElemento(aEliminar)){
-            listaPacientes.eliminarElemento(aEliminar);
-            r.resultado = Retorno.Resultado.OK;
-            return r;
-        }
-        else{
-            r.resultado = Retorno.Resultado.ERROR_1;
-            return r;
-        }
+public Retorno eliminarPaciente(int CI) {
+    Retorno r = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
+    Paciente pacienteAEliminar = new Paciente();
+    pacienteAEliminar.setCI(CI);
+
+    // Verificar si el paciente existe
+    if (!listaPacientes.existeElemento(pacienteAEliminar)) {
+        r.resultado = Retorno.Resultado.ERROR_1;
+        return r;
     }
+
+    // Obtener el paciente de la lista para verificar sus consultas
+    Nodo<Paciente> nodoPaciente = listaPacientes.obtenerElemento(pacienteAEliminar);
+    Paciente paciente = nodoPaciente.getDato();
+
+    // Verificar si el paciente ha agendado alguna vez una consulta
+    if (paciente.haAgendadoConsulta()) { // Asumiendo que existe el método haAgendadoConsulta()
+        r.resultado = Retorno.Resultado.ERROR_2;
+        return r;
+    }
+
+    // Proceder a eliminar el paciente
+    listaPacientes.eliminarElemento(pacienteAEliminar);
+    r.resultado = Retorno.Resultado.OK;
+    return r;
+}
+
 
     @Override
     public Retorno reservaConsulta(int codMedico, int ciPaciente, Date fecha) {
@@ -149,7 +174,7 @@ public class Sistema implements IObligatorio {
             aBuscar.setFechaDeseadaUltimaConsulta(fecha);
             medicoBusqueda.getColaDeEspera().encolar(aBuscar);
         }
-        
+        aBuscar.setContadorConsultas(aBuscar.getContadorConsultas() + 1);
         r.resultado = Retorno.Resultado.OK;
         
         return r;
@@ -283,7 +308,7 @@ public class Sistema implements IObligatorio {
             if(consulta.getCiPaciente()== CIPaciente && consulta.getCodMedico()== codMedico && consulta.sonDelMismoDia(consulta.getFecha(), fechaActual) && consulta.getEstado().equals("en espera")){
                 consulta.setEstado("terminada");
                 consulta.setDescripcion(detalleDeConsulta);
-                medicoBuscado.AgregarConsulta(consulta);
+                //medicoBuscado.AgregarConsulta(consulta);
                 consultaEncontrada = true;
                 break;
             }
