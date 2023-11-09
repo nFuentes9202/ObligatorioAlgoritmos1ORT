@@ -59,7 +59,8 @@ public class Main {
         p.ver(s.agregarPaciente("Juan", 123144, "Belloni 5023").resultado, Retorno.Resultado.OK, "Se agrega correctamente al paciente");
         p.ver(s.agregarPaciente("Gabino", 1, "Av. Falsa 123").resultado, Retorno.Resultado.OK, "Se agrega correctamente al paciente");
         p.ver(s.agregarPaciente("Lucia", 2, "Tabaré s/n").resultado, Retorno.Resultado.OK, "Se agrega correctamente al paciente");//prueba paula
-        
+        p.ver(s.agregarPaciente("Paciente Prueba", 9999, "Direccion de prueba").resultado, Retorno.Resultado.OK, "Se agrega correctamente al paciente de prueba");
+
         //Caso de prueba: No se pudo crear el paciente porque ya hay uno con igual CI
         p.ver(s.agregarPaciente("Nahuel", 60242466, "Instrucciones 3928").resultado, Retorno.Resultado.ERROR_1, "Paciente con la misma cedula, no se crea");
     }
@@ -165,7 +166,7 @@ public class Main {
     public static void p1_ListarPacientesEspera(Prueba p, Sistema s){
         
         //Caso de prueba: Si se muestran los pacientes “en espera” para ese médico en esa fecha.
-        p.ver(s.listarPacientesEnEspera("5", s.convertirLocalDateADate(LocalDate.of(2023,11,8))).resultado, Retorno.Resultado.OK, "Se listan los pacientes en espera para el médico con código 2 en la fecha");
+        p.ver(s.listarPacientesEnEspera("5", s.convertirLocalDateADate(LocalDate.of(2023,11,9))).resultado, Retorno.Resultado.OK, "Se listan los pacientes en espera para el médico con código 2 en la fecha");
         
         //Caso de prueba: No se muestran los pacientes “en espera” para ese médico en esa fecha porque el medico no tiene dia de consulta .
         p.ver(s.listarPacientesEnEspera("3", s.convertirLocalDateADate(LocalDate.now())).resultado, Retorno.Resultado.ERROR_1, "No se listan los pacientes porque el médico con código 3 no tiene consultas en la fecha de hoy.");
@@ -173,6 +174,14 @@ public class Main {
     public static void p1_terminarConsultaMedicoPaciente(Prueba p, Sistema s){
         //Se asume que existe una reserva en espera para el medico con codigo 5 y el paciente con CI 2
         p.ver(s.terminarConsultaMedicoPaciente(2, 5, "Reposo por una semana").resultado, Retorno.Resultado.OK, "Se cierra la consulta del paciente 2 con el medico 5 y se setea la descripcion");
+        // Caso de prueba: CI de paciente no existe
+        p.ver(s.terminarConsultaMedicoPaciente(4343, 5, "Detalle de la consulta").resultado, Retorno.Resultado.ERROR_1, "No existe un paciente con CI 4343");
+
+        // Caso de prueba: Código de médico no existe
+        p.ver(s.terminarConsultaMedicoPaciente(2, 4764, "Detalle de la consulta").resultado, Retorno.Resultado.ERROR_2, "No existe un médico con código 4764");
+
+        // Caso de prueba: No hay consulta "en espera" en la fecha del día
+        p.ver(s.terminarConsultaMedicoPaciente(9999, 2, "Detalle de la consulta").resultado, Retorno.Resultado.ERROR_2, "No hay consulta 'en espera' para hoy para el paciente con CI 9999 con el médico 2");
     }
     public static void p1_cerrarConsulta(Prueba p, Sistema s){
         //Caso de prueba: Si se pudo cerrar la consulta correctamente

@@ -278,44 +278,58 @@ public Retorno eliminarPaciente(int CI) {
     @Override
     public Retorno terminarConsultaMedicoPaciente(int CIPaciente, int codMedico, String detalleDeConsulta) {
         Retorno r = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
-        
+
         Date fechaActual = new Date();
-        
-        //Buscar paciente por CI
+
+        // Buscar paciente por CI
         Paciente pacienteBuscado = new Paciente();
         pacienteBuscado.setCI(CIPaciente);
         Nodo<Paciente> nodoPaciente = listaPacientes.obtenerElemento(pacienteBuscado);
-        if(nodoPaciente == null){
+        if (nodoPaciente == null) {
             r.resultado = Retorno.Resultado.ERROR_1;
             return r;
         }
-        
-        //Buscar medico por Codigo
+
+        // Buscar médico por Código
         Medico medicoBuscado = new Medico();
         medicoBuscado.setCodMedico(codMedico);
         Nodo<Medico> nodoMedico = listaMedicos.obtenerElemento(medicoBuscado);
-        
+
+        if (nodoMedico == null) {
+            r.resultado = Retorno.Resultado.ERROR_2;
+            return r;
+        }
+
         Medico medico = nodoMedico.getDato();
         ListaSimple<Consulta> consultas = medico.getConsultas();
         Nodo<Consulta> nodoConsulta = consultas.getInicio();
         boolean consultaEncontrada = false;
-        
-        while(nodoConsulta!=null){
+
+        while (nodoConsulta != null) {
             Consulta consulta = nodoConsulta.getDato();
-            if(consulta.getCiPaciente()== CIPaciente && consulta.getCodMedico()== codMedico && consulta.sonDelMismoDia(consulta.getFecha(), fechaActual) && consulta.getEstado().equals("en espera")){
+            if (consulta.getCiPaciente() == CIPaciente && consulta.getCodMedico() == codMedico
+                    && consulta.sonDelMismoDia(consulta.getFecha(), fechaActual)
+                    && consulta.getEstado().equals("en espera")) {
+
                 consulta.setEstado("terminada");
                 consulta.setDescripcion(detalleDeConsulta);
-                //medicoBuscado.AgregarConsulta(consulta);
+
+                // Agregar la consulta al historial clínico del paciente
+                Paciente paciente = nodoPaciente.getDato();
+                paciente.AgregarHistoriaClinica(consulta);
+
                 consultaEncontrada = true;
                 break;
             }
             nodoConsulta = nodoConsulta.getSiguiente();
         }
-        if(consultaEncontrada){
+
+        if (consultaEncontrada) {
             r.resultado = Retorno.Resultado.OK;
-        }else{
+        } else {
             r.resultado = Retorno.Resultado.ERROR_2;
         }
+
         return r;
     }
 
@@ -347,8 +361,6 @@ public Retorno eliminarPaciente(int CI) {
                 
                 Paciente pacienteBuscado = new Paciente();
                 pacienteBuscado.setCI(consulta.getCiPaciente());
-                Nodo<Paciente> nodoPaciente = listaPacientes.obtenerElemento(pacienteBuscado);
-                Paciente paciente = nodoPaciente.getDato();
                 
                 consultaEncontrada = true;
                 pacienteBuscado.AgregarHistoriaClinica(consulta);
@@ -424,7 +436,7 @@ public Retorno eliminarPaciente(int CI) {
     @Override
     public Retorno listarPacientesEnEspera(String codMedicoStr, Date fecha) {
         Retorno retorno = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
-        int codMedico = Integer.parseInt(codMedicoStr); // Asegúrate de manejar NumberFormatException si el código no es un número válido.
+        int codMedico = Integer.parseInt(codMedicoStr); 
     
         // Buscar el médico por código.
         Medico medicoBuscado = new Medico();
