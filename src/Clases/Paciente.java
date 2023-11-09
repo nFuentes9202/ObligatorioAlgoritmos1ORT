@@ -21,6 +21,8 @@ public class Paciente implements Comparable<Paciente>{
     
     private Date fechaDeseadaUltimaConsulta;
     
+    private int contadorConsultas;
+    
     private ListaSimple<Consulta> HistorialClinico;
     
     public Paciente(String elNombre, int laCI, String laDireccion){
@@ -120,5 +122,23 @@ public class Paciente implements Comparable<Paciente>{
      */
     public void setFechaDeseadaUltimaConsulta(Date fechaDeseadaUltimaConsulta) {
         this.fechaDeseadaUltimaConsulta = fechaDeseadaUltimaConsulta;
+    }
+
+    /**
+     * @return the contadorConsultas
+     */
+    public int getContadorConsultas() {
+        return contadorConsultas;
+    }
+
+    /**
+     * @param contadorConsultas the contadorConsultas to set
+     */
+    public void setContadorConsultas(int contadorConsultas) {
+        this.contadorConsultas = contadorConsultas;
+    }
+    
+    public boolean haAgendadoConsulta(){
+        return this.contadorConsultas > 0;
     }
 }
